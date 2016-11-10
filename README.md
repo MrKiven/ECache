@@ -3,13 +3,14 @@
 ### Usage
 
 ```python
+# -*- coding: utf-8 -*-
 
 import redis
 from sqlalchemy import (Column, Integer, String, SmallInteger)
 
-from ecache import cache_mixin
-from ecache import db_manager, model_base
+from ecache import cache_mixin, db_manager, model_base
 
+# alsosee :class:`ecache.db.DBManager`
 DBSession = db_manager.get_session('test')
 cache_client = redis.StrictRedis()
 CacheMixin = cache_mixin()
