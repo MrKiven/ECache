@@ -4,9 +4,11 @@ import logging
 import itertools
 import redis
 
+import sqlalchemy.exc as sa_exc
 from sqlalchemy.orm.util import identity_key
 from sqlalchemy.orm import attributes
-import sqlalchemy.exc as sa_exc
+
+from hook import EventHook
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +38,8 @@ class _Failed(object):
 class CacheMixinBase(object):
 
     RAWDATA_VERSION = None
+
+    TABLE_CACHE_EXPIRATION_TIME = None
 
     _cache_client = _Failed()
     _db_session = _Failed()
@@ -203,3 +207,39 @@ class CacheMixinBase(object):
                 logger.warn("No pk found for %s, skip %s" %
                             cls.__tablename__, lack_pks)
         return objs if as_dict else _dict2list(pks, objs)
+
+    @classmethod
+    def set_raw(cls, val, expiration_time=None):
+        if not val:
+            return
+
+        pk_name = cls.pk_name()
+        ttl = expiration_time or cls.TABLE_CACHE_EXPIRATION_TIME
+        key = cls.gen_raw_key(val[pk_name])
+        return cls._cache_client.set(key, val, expiration_time=ttl)
+
+    @classmethod
+    def mset(cls, vals):
+        if not vals:
+            return
+
+        assert isinstance(vals[0], cls)
+
+        ttl = cls.TABLE_CACHE_EXPIRATION_TIME
+        objs = {
+            cls.gen_raw_key(val.pk): val.__rawdata__ for val in vals
+        }
+        return cls._cache_client.mset(objs, expiration_time=ttl)
+
+
+def cache_mixin(cache, session, pub=True):
+    """CacheMixin factory"""
+
+    hook = EventHook([cache], session, pub=pub)
+
+    class _Cache(CacheMixinBase):
+        _hook = hook
+
+        _cache_client = cache
+        _db_session = session
+    return _Cache
