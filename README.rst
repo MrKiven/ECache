@@ -37,7 +37,7 @@ With Flask Integrate
     db = SQLAlchemy(app)
 
     class User(db.Model, CacheableMixin):
-        """Default backend is redis and expiration time si 1 hour, default
+        """Default backend is redis and expiration time is 1 hour, default
         region name is `default`, you can override this:
 
             cache_regions = your_regions
