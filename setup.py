@@ -31,6 +31,8 @@ setup(
         'redis>=2.10.5',
         'flask>=0.10.1',
         'Flask-SQLAlchemy==2.1',
-        'dogpile.cache==0.5.4'
+        'dogpile.cache==0.5.4',
+        'meepo>=0.18',
+        'blinker>=1.3'
     ]
 )

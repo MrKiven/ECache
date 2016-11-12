@@ -3,7 +3,15 @@
 import logging
 import itertools
 
-from meepo.signals import signal
+try:
+    from meepo.signals import signal
+except ImportError:
+    from blinker import signal
+    import warning
+    warning.warn("""
+You should checkout meepo develop branch to install !!!
+See: https://github.com/eleme/meepo.
+""", DeprecationWarning)
 from meepo.apps.eventsourcing import sqlalchemy_es_pub
 
 
