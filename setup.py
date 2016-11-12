@@ -30,7 +30,7 @@ setup(
     long_description=long_description,
     author='Mrkiven',
     author_email="kiven.mr@gmail.com",
-    package=find_packages(),
+    packages=find_packages() + ['include/meepo'],
     license='MIT',
     install_requires=requires
 )
