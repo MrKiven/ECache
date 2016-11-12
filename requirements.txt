@@ -1,5 +1,4 @@
 SQLAlchemy==0.9.3
-meepo==0.1.8
 redis>=2.10.5
 flask>=0.10.1
 Flask-SQLAlchemy==2.1
