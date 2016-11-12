@@ -10,6 +10,14 @@ Run test
     make unittest
 
 
+Installation / Rquirements
+--------------------------
+
+.. code::
+
+    pip intall ecache
+
+
 Usage
 -----
 
