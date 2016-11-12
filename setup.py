@@ -18,10 +18,6 @@ with open("README.rst") as f:
 
 requires = []
 
-with open("requirements.txt") as f:
-    for line in f:
-        requires.append(line)
-
 
 setup(
     name="ecache",
@@ -30,7 +26,14 @@ setup(
     long_description=long_description,
     author='Mrkiven',
     author_email="kiven.mr@gmail.com",
-    packages=find_packages() + ['include/meepo'],
+    packages=find_packages(),
+    package_data={'include': 'meepo/*'},
     license='MIT',
-    install_requires=requires
+    install_requires=[
+        'SQLAlchemy==0.9.3',
+        'redis>=2.10.5',
+        'flask>=0.10.1',
+        'Flask-SQLAlchemy==2.1',
+        'dogpile.cache==0.5.4'
+    ]
 )
