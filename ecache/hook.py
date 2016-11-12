@@ -3,8 +3,8 @@
 import logging
 import itertools
 
-from meepo.signals import signal
-from meepo.apps.eventsourcing import sqlalchemy_es_pub
+from include.meepo.meepo.signals import signal
+from include.meepo.meepo.apps.eventsourcing import sqlalchemy_es_pub
 
 
 class EventHook(sqlalchemy_es_pub):
