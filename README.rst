@@ -24,7 +24,29 @@ Usage
 With Flask Integrate
 ~~~~~~~~~~~~~~~~~~~~
 
-See `example`_
+.. code:: python
+
+    from ecache.ext.flask_cache import CacheableMixin, query_callable, regions
+
+    class User(db.Model, CacheableMixin):
+        cache_label = 'default'
+        cache_region = regions
+
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String)
+
+    @app.route('/users')
+    def all_users():
+        users = [user.to_dict() for user in User.cache.filter()]
+        return jsonify(users=users)
+
+
+    @app.route('/users/<int:user_id')
+    def view_user(user_id):
+        user = User.cache.get(user_id)
+        return jsonify(user.to_dict())
+
+More detail see `example`_
 
 .. _`example`: https://github.com/MrKiven/ECache/blob/master/ecache/ext/example.py
 

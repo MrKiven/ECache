@@ -5,7 +5,7 @@ import random
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 
-from caching import CacheableMixin, query_callable, regions
+from ecache.ext.flask_cache import CacheableMixin, query_callable, regions
 
 
 app = Flask(__name__)
