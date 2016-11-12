@@ -16,8 +16,6 @@ def _get_version():
 with open("README.rst") as f:
     long_description = f.read()
 
-requires = []
-
 
 setup(
     name="ecache",
@@ -26,8 +24,7 @@ setup(
     long_description=long_description,
     author='Mrkiven',
     author_email="kiven.mr@gmail.com",
-    packages=find_packages(),
-    package_data={'include': 'meepo/*'},
+    packages=find_packages() + ['include/meepo'],
     license='MIT',
     install_requires=[
         'SQLAlchemy==0.9.3',
