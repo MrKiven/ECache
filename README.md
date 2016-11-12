@@ -1,5 +1,9 @@
 ## Ecache for sqlalchemy
 
+### Test
+
+`make unittest`
+
 ### Usage
 
 ```python
