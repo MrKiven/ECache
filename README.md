@@ -14,7 +14,8 @@ make unittest
 import redis
 from sqlalchemy import (Column, Integer, String, SmallInteger)
 
-from ecache import cache_mixin, db_manager, model_base
+from ecache.core import cache_mixin
+from ecache.db import db_manager, model_base
 
 # alsosee :class:`ecache.db.DBManager`
 DBSession = db_manager.get_session('test')
@@ -36,7 +37,7 @@ class TodoListModel(DeclarativeBase, CacheMixin):
         todo = cls.get(todo_id)  # `cls.get` inherited from `CacheMixin`
         return todo
 
-    @classmehod
+    @classmethod
     def add(cls, title):
         todo = cls(title=title)
         s = DBSession()
