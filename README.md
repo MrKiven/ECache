@@ -1,8 +1,10 @@
 ## Ecache for sqlalchemy
 
-### Test
+### Run test
 
-`make unittest`
+```bash
+make unittest
+```
 
 ### Usage
 
