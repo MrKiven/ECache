@@ -24,6 +24,7 @@ setup(
     long_description=long_description,
     author='Mrkiven',
     author_email="kiven.mr@gmail.com",
+    url="https://github.com/MrKiven/ECache",
     packages=find_packages() + ['include/meepo'],
     license='MIT',
     install_requires=[
