@@ -63,7 +63,9 @@ class RoutingSession(Session):
         try:
             with gevent.Timeout(5):
                 super(RoutingSession, self).close()
+        # pylint: disable=E0712
         except gevent.Timeout:
+            # pylint: enable=E0712
             close_connections(self.engines.itervalues(), current_transactions)
             raise
 

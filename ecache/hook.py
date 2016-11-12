@@ -9,7 +9,7 @@ from meepo.apps.eventsourcing import sqlalchemy_es_pub
 
 class EventHook(sqlalchemy_es_pub):
 
-    def __init__(self, cache_clients, session, tables=None, pub=True):
+    def __init__(self, cache_clients, session, tables=None):
         super(EventHook, self).__init__(session, tables)
 
         self.cache_clients = cache_clients

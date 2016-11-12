@@ -8,7 +8,7 @@ import sqlalchemy.exc as sa_exc
 from sqlalchemy.orm.util import identity_key
 from sqlalchemy.orm import attributes
 
-from hook import EventHook
+from ecache.hook import EventHook
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +178,7 @@ class CacheMixinBase(object):
                         objs[pk] = cls._db_session.identity_map[identity_key]
 
             if len(pks) > len(objs):
-                missed_pks = list(set(pks) -set(objs))
+                missed_pks = list(set(pks) - set(objs))
                 vals = cls._cache_client.mget(cls.gen_raw_key(pk)
                                               for pk in missed_pks)
                 if vals:
@@ -238,10 +238,10 @@ class CacheMixinBase(object):
         return cls._cache_client.mset(objs, expiration_time=ttl)
 
 
-def cache_mixin(cache, session, pub=True):
+def cache_mixin(cache, session):
     """CacheMixin factory"""
 
-    hook = EventHook([cache], session, pub=pub)
+    hook = EventHook([cache], session)
 
     class _Cache(CacheMixinBase):
         _hook = hook
