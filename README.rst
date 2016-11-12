@@ -16,7 +16,7 @@ Usage
 With Flask Integrate
 ~~~~~~~~~~~~~~~~~~~~
 
-See `example_`
+See `example`_
 
 .. _`example`: https://github.com/MrKiven/ECache/blob/master/ecache/ext/example.py
 
