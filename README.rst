@@ -26,23 +26,39 @@ With Flask Integrate
 
 .. code:: python
 
+    from flask import Flask, jsonify
+    from flask_sqlalchemy import SQLAlchemy
+
     from ecache.ext.flask_cache import CacheableMixin, query_callable, regions
 
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+    app.debug = True
+    db = SQLAlchemy(app)
+
     class User(db.Model, CacheableMixin):
-        cache_label = 'default'
-        cache_region = regions
+        """Default backend is redis and expiration time si 1 hour, default
+        region name is `default`, you can override this:
+
+            cache_regions = your_regions
+            cache_label = your_label
+        """
 
         id = db.Column(db.Integer, primary_key=True)
         name = db.Column(db.String)
 
     @app.route('/users')
     def all_users():
+        """Result will try to get from cache first. load from db if cache miss.
+        """
         users = [user.to_dict() for user in User.cache.filter()]
         return jsonify(users=users)
 
 
     @app.route('/users/<int:user_id')
     def view_user(user_id):
+        """Result will try to get from cache first. load from db if cache miss.
+        """
         user = User.cache.get(user_id)
         return jsonify(user.to_dict())
 

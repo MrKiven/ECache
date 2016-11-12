@@ -194,6 +194,8 @@ class Cache(object):
 
 
 class CacheableMixin(object):
+    cache_label = 'default'
+    cache_regions = regions
 
     @declared_attr
     def cache(cls):
