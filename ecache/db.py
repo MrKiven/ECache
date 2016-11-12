@@ -5,6 +5,10 @@ import uuid
 import random
 import threading
 import contextlib
+import os
+import time
+import sha
+import gevent
 
 from sqlalchemy import event
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
@@ -14,6 +18,54 @@ from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 db_ctx = threading.local()
 logger = logging.getLogger(__name__)
+
+
+class RoutingSession(Session):
+    _name = None
+
+    def __init__(self, engines, *args, **kwargs):
+        super(RoutingSession, self).__init__(*args, **kwargs)
+        self.engines = engines
+        self.slave_engines = [e for role, e in engines.iteritems()
+                              if role != 'master']
+        assert self.slave_engines, ValueError('DB slave config is wrong!')
+        self._id = self.gen_id()
+
+    def get_bind(self, mapper=None, clause=None):
+        if self._name:
+            return self.engines[self._name]
+        elif self._flushing:
+            return self.engines['master']
+        else:
+            return random.choice(self.slave_engines)
+
+    def using_bind(self, name):
+        self._name = name
+        return self
+
+    def gen_id(self):
+        pid = os.getpid()
+        tid = threading.current_thread().ident
+        clock = time.time() * 1000
+        address = id(self)
+        hash_key = self.hash_key
+        return sha.new('{0}\0{1}\0{2}\0{3}\0{4}'.format(
+            pid, tid, clock, address, hash_key)).hexdigest()[:20]
+
+    def rollback(self):
+        with gevent.Timeout(5):
+            super(RoutingSession, self).rollback()
+
+    def close(self):
+        current_transactions = tuple()
+        if self.transaction is not None:
+            current_transactions = self.transaction._iterate_parents()
+        try:
+            with gevent.Timeout(5):
+                super(RoutingSession, self).close()
+        except gevent.Timeout:
+            close_connections(self.engines.itervalues(), current_transactions)
+            raise
 
 
 class RecycleField(object):
@@ -62,7 +114,7 @@ def make_session(engines, force_scope=False, info=None):
 
     session = scoped_session(
         sessionmaker(
-            class_=Session,
+            class_=RoutingSession,
             expire_on_commit=False,
             engines=engines,
             info=info or {"name": uuid.uuid4().hex},
@@ -70,6 +122,13 @@ def make_session(engines, force_scope=False, info=None):
         scopefunc=scopefunc
     )
     return session
+
+
+def create_engine(*args, **kwds):
+    engine = patch_engine(sqlalchemy_create_engine(*args, **kwds))
+    event.listen(engine, 'before_cursor_execute', sql_commenter,
+                 retval=True)
+    return engine
 
 
 @contextlib.contextmanager

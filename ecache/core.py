@@ -51,13 +51,13 @@ class CacheMixinBase(object):
     @property
     def __rawdata__(self):
         return {c.name: getattr(self, c.name)
-                for c in self.__tablename__.columns}
+                for c in self.__table__.columns}
 
     @classmethod
     def gen_raw_key(cls, pk):
         """Generate raw key without namespace"""
 
-        if not cls.RAWDATA_VERSION:
+        if cls.RAWDATA_VERSION:
             return "{0}|{1}|{2}".format(
                 cls.__tablename__, pk, cls.RAWDATA_VERSION)
         return "{0}|{1}".format(cls.__tablename__, pk)
@@ -209,6 +209,12 @@ class CacheMixinBase(object):
         return objs if as_dict else _dict2list(pks, objs)
 
     @classmethod
+    def set(cls, val, expiration_time=None):
+        assert isinstance(val, cls)
+
+        cls.set_raw(val.__rawdata__, expiration_time)
+
+    @classmethod
     def set_raw(cls, val, expiration_time=None):
         if not val:
             return
@@ -216,7 +222,7 @@ class CacheMixinBase(object):
         pk_name = cls.pk_name()
         ttl = expiration_time or cls.TABLE_CACHE_EXPIRATION_TIME
         key = cls.gen_raw_key(val[pk_name])
-        return cls._cache_client.set(key, val, expiration_time=ttl)
+        return cls._cache_client.set(key, val, ttl)
 
     @classmethod
     def mset(cls, vals):
