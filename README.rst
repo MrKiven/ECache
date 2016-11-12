@@ -1,12 +1,14 @@
 Ecache for sqlalchemy
 =====================
 
+
 Run test
 --------
 
-```bash
-make unittest
-```
+.. code:: bash
+
+    make unittest
+
 
 Usage
 -----
@@ -14,7 +16,9 @@ Usage
 With Flask Integrate
 ~~~~~~~~~~~~~~~~~~~~
 
-Sess [example](ecache/ext/example.py)
+See `example_`
+
+.. _`example`: https://github.com/MrKiven/ECache/blob/master/ecache/ext/example.py
 
 
 With Pure SQLAlchemy model Integrate
