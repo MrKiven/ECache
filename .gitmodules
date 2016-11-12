@@ -1,0 +1,3 @@
+[submodule "include/meepo"]
+	path = include/meepo
+	url = git@github.com:eleme/meepo.git
