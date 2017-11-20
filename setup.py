@@ -33,7 +33,7 @@ setup(
         'flask>=0.10.1',
         'Flask-SQLAlchemy==2.1',
         'dogpile.cache==0.5.4',
-        'meepo>=0.18',
+        'meepo>=0.1.8',
         'blinker>=1.3'
     ]
 )

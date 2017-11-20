@@ -15,7 +15,7 @@ Installation / Rquirements
 
 .. code::
 
-    pip intall ecache
+    pip install ecache
 
 
 Usage
